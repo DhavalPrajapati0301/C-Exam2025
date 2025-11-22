@@ -1,0 +1,122 @@
+#include<stdio.h>
+#include <stdlib.h>
+
+struct Customer {
+    int cusId;
+    char cusName[50];
+    float purchaseAmount;
+    float cusGrossProfit;
+    float cusNetProfit;
+    float cusDiscount;
+};
+
+void createCustomer() {
+    struct Customer c1;
+
+    printf("Enter Customer ID: ");
+    scanf("%d", &c1.cusId);
+
+    printf("Enter Customer Name: ");
+    scanf("%s", c1.cusName);
+
+    printf("Enter Purchase Amount: ");
+    scanf("%f", &c1.purchaseAmount);
+
+    printf("Enter Gross Profit: ");
+    scanf("%f", &c1.cusGrossProfit);
+
+    printf("Enter Net Profit: ");
+    scanf("%f", &c1.cusNetProfit);
+
+    printf("Enter Discount: ");
+    scanf("%f", &c1.cusDiscount);
+
+    FILE *fp = fopen("customers.txt", "w+");  
+    fwrite(&c1, sizeof(c1), 1, fp);
+    fclose(fp);
+
+    printf("Customer saved successfully!\n");
+}
+
+void displayAllCustomers() {
+    struct Customer c;
+    FILE *fp = fopen("customers.txt", "r+");   
+
+    if(fp == NULL){
+        printf("No customer file found!\n");
+        return;
+    }
+
+    printf("\n--- All Customers ---\n");
+
+    while(fread(&c, sizeof(c), 1, fp)) {
+        printf("\nCustomer ID: %d", c.cusId);
+        printf("\nCustomer Name: %s", c.cusName);
+        printf("\nPurchase Amount: %.2f", c.purchaseAmount);
+        printf("\nGross Profit: %.2f", c.cusGrossProfit);
+        printf("\nNet Profit: %.2f", c.cusNetProfit);
+        printf("\nDiscount: %.2f\n", c.cusDiscount);
+    }
+
+    fclose(fp);
+}
+
+void searchCustomer() {
+    struct Customer c;
+    int searchId;
+
+    printf("Enter Customer ID to search: ");
+    scanf("%d", &searchId);
+
+    FILE *fp = fopen("customers.txt", "r+");  
+
+    if(fp == NULL){
+        printf("No file found!\n");
+        return;
+    }
+
+    while(fread(&c, sizeof(c), 1, fp)) {
+        if(c.cusId == searchId) {
+            printf("\n--- Customer Found ---\n");
+            printf("Customer ID: %d\n", c.cusId);
+            printf("Customer Name: %s\n", c.cusName);
+            printf("Purchase Amount: %.2f\n", c.purchaseAmount);
+            printf("Gross Profit: %.2f\n", c.cusGrossProfit);
+            printf("Net Profit: %.2f\n", c.cusNetProfit);
+            printf("Discount: %.2f\n", c.cusDiscount);
+            fclose(fp);
+            return;
+        }
+    }
+    printf("Customer not found.\n");
+    fclose(fp);
+}
+
+
+
+int main() {
+    int choice;
+    
+    while(1){
+        printf("\n--- Customer Management System ---\n");
+        printf("1. Create Customer\n");
+        printf("2. Display All Customers\n");
+        printf("3. Search Customer\n");
+        printf("4. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch(choice) {
+            case 1: createCustomer(); 
+            break;
+            case 2: displayAllCustomers(); 
+            break;
+            case 3: searchCustomer(); 
+            break;
+            case 4: exit(0);
+            default: printf("Invalid choice\n");
+        }
+    }
+
+    return 0;
+}
